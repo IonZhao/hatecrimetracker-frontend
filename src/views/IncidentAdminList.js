@@ -7,7 +7,7 @@ import "./IncidentAdminList.css";
 import IncidentEdit from "./IncidentEdit";
 import CustomTable from "./CustomTable";
 import IncidentAdminPage from "./IncidentAdmin"
-
+import { signInWithGoogle } from "../firebase";
 
 const IncidentListPage = () => {
 	const user = useContext(UserContext) || { photoURL: "", displayName: "Guest", email: "guest@example.com" };
@@ -131,7 +131,25 @@ const IncidentListPage = () => {
 					<div className="flex-grow-1 main-content">
 					{selectedTab === 'news' ? (
 						<IncidentAdminPage />
-					) : selectedIncident ? (
+					) : 
+					// If the user is not an admin, display the sign-in button
+					!user || !user.isadmin ? (
+						<div className="col-2">
+							<Button
+							tag={Link}
+							to="/admin/selfreport"
+							color="secondary"
+							block
+							onClick={() => {
+								signInWithGoogle();
+							}}
+							>
+							Sign in with Google
+							</Button>
+						</div>
+					) :	
+					// If the user is an admin, display the incident list or the incident edit form
+					selectedIncident ? (
 						<IncidentEdit incident={selectedIncident} onBack={handleBackClick} />
 					) : (
 						<CustomTable
