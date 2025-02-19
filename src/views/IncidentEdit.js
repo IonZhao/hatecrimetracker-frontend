@@ -2,17 +2,40 @@ import React, { useState } from "react";
 import { Button, Form, FormGroup, Label, Input, Row, Col, Modal, ModalHeader, ModalBody } from "reactstrap";
 import "./IncidentEdit.css";
 
-const IncidentEdit = ({ incident }) => {
+const IncidentEdit = ({ incident, onBack }) => {
 	const [selectedFiles, setSelectedFiles] = useState(incident.files || []);
 	const [selectedPreviews, setSelectedPreviews] = useState([]);
-	const [status, setStatus] = useState("Pending");
+	// const [status, setStatus] = useState("Pending");
 	const [modal, setModal] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 
+	const [incidentData, setIncidentData] = useState({
+		id: incident.id,
+		incidentTime: incident.incident_time,
+		title: incident.title,
+		location: incident.incident_location,
+		abstract: incident.content,
+		file_url: incident.file_url,
+		status: incident.status || "Pending",
+		// reviewer: incident.reviewer,
+		contactEmail: incident.contact_email,
+		contactPhoneNumber: incident.contact_phone_number,
+		comment: incident.comment,
+	  });
+
 	const toggleModal = () => setModal(!modal);
 
-	const handleStatusChange = (event) => {
-		setStatus(event.target.value);
+	// const handleStatusChange = (event) => {
+	// 	setStatus(event.target.value);
+	// };
+
+	const handleInputChange = (event) => {
+		const { name, value } = event.target;
+		setIncidentData((prevData) => ({
+		  ...prevData,
+		  [name]: value,
+		}));
+		// console.log("Incident Data: ", incidentData);
 	};
 
 	const handleFileChange = (event) => {
@@ -33,6 +56,17 @@ const IncidentEdit = ({ incident }) => {
 				return [...prev, file];
 			}
 		});
+	};
+
+	// TODO: return to the incident list page, need to pass the updated incident data
+	const handleSave = () => {
+		console.log("Save button clicked", incidentData);
+		onBack();
+  	};
+
+	const handleCancel = () => {
+		// console.log("Cancel button clicked");
+		onBack();
 	};
 
 	const renderFilePreview = (file) => {
@@ -68,32 +102,32 @@ const IncidentEdit = ({ incident }) => {
 					<Row form>
 						<FormGroup>
 							<Label for="incidentID">Incident ID: </Label>
-							<span> #{incident.id}</span>
+							<span> #{incidentData.id}</span>
 						</FormGroup>
 					</Row>
 					<Row form>
 						<Col md={3}>
 							<FormGroup>
 								<Label for="incidentTime">Incident Time: </Label>
-								<Input type="text" name="incidentTime" id="incidentTime" value={incident.time} />
+								<Input type="text" name="incidentTime" id="incidentTime" value={incidentData.incidentTime} onChange={handleInputChange}/>
 							</FormGroup>
 						</Col>
 						<Col md={3}>
 							<FormGroup>
 								<Label for="location">Location:</Label>
-								<Input type="text" name="location" id="location" value={incident.location} />
+								<Input type="text" name="location" id="location" value={incidentData.location} onChange={handleInputChange}/>
 							</FormGroup>
 						</Col>
 						<Col md={6}>
 							<FormGroup>
 								<Label for="title">Title:</Label>
-								<Input type="text" name="title" id="title" value={incident.title} />
+								<Input type="text" name="title" id="title" value={incidentData.title} onChange={handleInputChange}/>
 							</FormGroup>
 						</Col>
 					</Row>
 					<FormGroup>
 						<Label for="abstract">Abstract:</Label>
-						<Input className="textarea" type="textarea" name="abstract" id="abstract" value={incident.abstract} />
+						<Input className="textarea" type="textarea" name="abstract" id="abstract" value={incidentData.abstract} onChange={handleInputChange}/>
 					</FormGroup>
 					<FormGroup>
 						<Label for="exampleFile">File:</Label>
@@ -134,7 +168,7 @@ const IncidentEdit = ({ incident }) => {
 								<Col md={3}>
 									<FormGroup>
 										<Label for="contactEmail">Contact Email:</Label>
-										<Input type="email" name="contactEmail" id="contactEmail" value={incident.contact_email} />
+										<Input type="email" name="contactEmail" id="contactEmail" value={incidentData.contactEmail} onChange={handleInputChange} />
 									</FormGroup>
 								</Col>
 								<Col md={3}>
@@ -144,7 +178,8 @@ const IncidentEdit = ({ incident }) => {
 											type="text"
 											name="contactPhoneNumber"
 											id="contactPhoneNumber"
-											value={incident.contact_phone_number}
+											value={incidentData.contactPhoneNumber}
+											onChange={handleInputChange}
 										/>
 									</FormGroup>
 								</Col>
@@ -158,7 +193,7 @@ const IncidentEdit = ({ incident }) => {
 					<Col md={2}>
 						<FormGroup>
 							<Label for="status">Current Status:</Label>
-							<Input type="select" name="status" id="status" value={status} onChange={handleStatusChange}>
+							<Input type="select" name="status" id="status" value={incidentData.status} onChange={handleInputChange}>
 								<option value="Pending">Pending</option>
 								<option value="Approved">Approved</option>
 								<option value="Rejected">Rejected</option>
@@ -168,10 +203,10 @@ const IncidentEdit = ({ incident }) => {
 
 					<FormGroup>
 						<Label for="comment">Comment:</Label>
-						<Input className="textarea" type="textarea" name="comment" id="comment" value={incident.comment} />
+						<Input className="textarea" type="textarea" name="comment" id="comment" value={incidentData.comment} onChange={handleInputChange}/>
 					</FormGroup>
-					<Button className="btn-save">Save</Button>
-					<Button className="btn-cancel">Cancel</Button>
+					<Button className="btn-save" onClick={handleSave}>Save</Button>
+					<Button className="btn-cancel" onClick={handleCancel}>Cancel</Button>
 				</Form>
 			</div>
 
