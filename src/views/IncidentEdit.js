@@ -5,7 +5,6 @@ import "./IncidentEdit.css";
 const IncidentEdit = ({ incident, onBack }) => {
 	const [selectedFiles, setSelectedFiles] = useState(incident.files || []);
 	const [selectedPreviews, setSelectedPreviews] = useState([]);
-	// const [status, setStatus] = useState("Pending");
 	const [modal, setModal] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 
@@ -25,17 +24,12 @@ const IncidentEdit = ({ incident, onBack }) => {
 
 	const toggleModal = () => setModal(!modal);
 
-	// const handleStatusChange = (event) => {
-	// 	setStatus(event.target.value);
-	// };
-
 	const handleInputChange = (event) => {
 		const { name, value } = event.target;
 		setIncidentData((prevData) => ({
 		  ...prevData,
 		  [name]: value,
 		}));
-		// console.log("Incident Data: ", incidentData);
 	};
 
 	const handleFileChange = (event) => {
@@ -60,12 +54,10 @@ const IncidentEdit = ({ incident, onBack }) => {
 
 	// TODO: return to the incident list page, need to pass the updated incident data
 	const handleSave = () => {
-		console.log("Save button clicked", incidentData);
 		onBack();
   	};
 
 	const handleCancel = () => {
-		// console.log("Cancel button clicked");
 		onBack();
 	};
 
