@@ -21,6 +21,36 @@ export function getIncidents( startDate, endDate, state = null, lang = 'en', ski
     });
 }
 
+export function getAllIncidents() {
+    const incidentsAPIUrl = config.api_endpoint + 
+        "/incidents?type=self-report";
+
+    return axios.get(incidentsAPIUrl,
+        {
+            headers: {
+                "Access-Control-Allow-Origin": "false",
+                "strict-origin-when-cross-origin": "false"
+            }
+        }).then((response) => {
+        return response.data.incidents;
+    });
+}
+
+export function getAllNews() {
+    const incidentsAPIUrl = config.api_endpoint + 
+        "/incidents?type=news";
+
+    return axios.get(incidentsAPIUrl,
+        {
+            headers: {
+                "Access-Control-Allow-Origin": "false",
+                "strict-origin-when-cross-origin": "false"
+            }
+        }).then((response) => {
+        return response.data.incidents;
+    });
+}
+
 export function getStats( startDate, endDate, state = null) {
     const statsAPIUrl =
         config.api_endpoint +

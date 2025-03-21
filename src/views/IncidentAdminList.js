@@ -8,6 +8,7 @@ import IncidentEdit from "./IncidentEdit";
 import CustomTable from "./CustomTable";
 import IncidentAdminPage from "./IncidentAdmin"
 import { signInWithGoogle } from "../firebase";
+import { deleteIncident, getAllIncidents,getAllNews } from "../services/incidents";
 
 const IncidentListPage = () => {
 	const user = useContext(UserContext) || { photoURL: "", displayName: "Guest", email: "guest@example.com" };
@@ -41,12 +42,33 @@ const IncidentListPage = () => {
 
 	const loadIncidents = async (page) => {
 		try {
-			const response = await fetch("/data.json");
-			const data = await response.json();
-			const startIndex = (page - 1) * 7;
-			const selectedIncidents = data.incidents.slice(startIndex, startIndex + 7);
-			setIncidents(selectedIncidents);
-			setTotalPages(Math.ceil(data.incidents.length / 7));
+			//get incidents from the server
+			getAllIncidents().then((incidents) => {
+
+				const newIncidents = incidents.map((incident,idx) => {		
+					return {
+						id: incident.id,
+						title: incident.title,	
+						incident_time: incident.incident_time,
+						incident_location: incident.incident_location,
+						content: incident.abstract,
+						file_url: incident.url,
+						status: "Pending",
+						reviewer: "Reviewer 1"
+					};
+				});
+				const length = newIncidents.length;
+
+
+				// setIncidents(incidents);
+				const startIndex = (page - 1) * 7;
+
+				const selectedIncidents = newIncidents.slice(startIndex, startIndex + 7);
+
+				setIncidents(selectedIncidents);
+				setTotalPages(Math.ceil(length / 7));
+	
+			});
 		} catch (error) {
 			console.error("Error loading incidents:", error);
 		}
@@ -54,12 +76,27 @@ const IncidentListPage = () => {
 
 	const loadNews = async (page) => {
 		try {
-		  const response = await fetch("/news.json");
-		  const data = await response.json();
-		  const startIndex = (page - 1) * 7;
-		  const selectedNews = data.news.slice(startIndex, startIndex + 7);
-		  setNews(selectedNews);
-		  setTotalPages(Math.ceil(data.news.length / 7));
+			//get incidents from the server
+			getAllNews().then((news) => {
+				const newNews = news.map((news,idx) => {		
+					return {
+						incident_time: news.incident_time,
+						incident_location: news.incident_location,
+						content: news.abstract,
+						file_url: news.url,
+						status: "Pending",
+						reviewer: "Reviewer 2"
+					};		
+				});
+				const length = newNews.length;
+						
+				const startIndex = (page - 1) * 7;
+				const selectedNews = newNews.slice(startIndex, startIndex + 7);
+				setNews(selectedNews);
+				setTotalPages(Math.ceil(length / 7));
+
+			});
+
 		} catch (error) {
 		  console.error("Error loading news:", error);
 		}
